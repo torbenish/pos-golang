@@ -37,11 +37,11 @@ func Deactivation(person Person) {
 }
 
 func main() {
-	john := Client{
-		Name:   "John",
-		Age:    30,
-		Active: true,
-	}
+	// john := Client{
+	// 	Name:   "John",
+	// 	Age:    30,
+	// 	Active: true,
+	// }
 	myEnterprise := Enterprise{}
 
 	Deactivation(myEnterprise)
