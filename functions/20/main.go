@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"pos-golang/matematics"
+	"github.com/google/uuid"
 )
 
 func main() {
@@ -12,4 +13,5 @@ func main() {
 	fmt.Println(car.Walk())
 	fmt.Println("Result: ", s)
 	fmt.Println(matematics.A)
+	fmt.Println(uuid.New())
 }
