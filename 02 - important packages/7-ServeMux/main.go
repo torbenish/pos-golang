@@ -10,7 +10,7 @@ func main() {
 
 	mux.HandleFunc("/", HomeHandler)
 	mux.Handle("/blog", blog{title: "My Blog"})
-	http.ListenAndServe(":8b.title080", mux)
+	http.ListenAndServe(":8080", mux)
 
 	mux2 := http.NewServeMux()
 	mux2.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
