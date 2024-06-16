@@ -1,4 +1,4 @@
-module github.com/torbenish/pos-golang/04-Database/3-GORM_Relationship
+module github.com/torbenish/pos-golang/04-Database/4-Has_One
 
 go 1.22.4
 
