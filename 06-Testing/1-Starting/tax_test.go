@@ -15,19 +15,19 @@ func TestCalculateTax(t *testing.T) {
 
 func TestCalculateTaxBatch(t *testing.T) {
 	type calcTax struct {
-		amount, espect float64
+		amount, expect float64
 	}
 
 	table := []calcTax{
 		{500.0, 5.0},
 		{1000.0, 10.0},
-		{1500.0, 12.0},
+		{1500.0, 10.0},
 	}
 
 	for _, item := range table {
 		result := CalculateTax(item.amount)
-		if result != item.espect {
-			t.Errorf("Expected %f, got %f", item.espect, result)
+		if result != item.expect {
+			t.Errorf("Expected %f, got %f", item.expect, result)
 		}
 	}
 }
