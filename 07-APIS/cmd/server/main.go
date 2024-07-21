@@ -22,7 +22,10 @@ func main() {
 		panic(err)
 	}
 	db.AutoMigrate(&entity.Product{}, &entity.User{})
+	productDB := database.NewProduct(db)
+	productHandler := NewProductHandler(productDB)
 
+	http.HandleFunc("/products", productHandler.CreateProduct)
 	http.ListenAndServe(":8000", nil)
 }
 
@@ -36,22 +39,22 @@ func NewProductHandler(db database.ProductInterface) *ProductHandler {
 	}
 }
 
-func (h *ProductHandler) Create(w http.ResponseWriter, r *http.Request) {
-	var product dto.CreateProductImput
+func (h *ProductHandler) CreateProduct(w http.ResponseWriter, r *http.Request) {
+	var product dto.CreateProductInput
 	err := json.NewDecoder(r.Body).Decode(&product)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
+			w.WriteHeader(http.StatusBadRequest)
+			return
 	}
 	p, err := entity.NewProduct(product.Name, product.Price)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
+			w.WriteHeader(http.StatusBadRequest)
+			return
 	}
 	err = h.ProductDB.Create(p)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
+			w.WriteHeader(http.StatusInternalServerError)
+			return
 	}
 	w.WriteHeader(http.StatusCreated)
 }
