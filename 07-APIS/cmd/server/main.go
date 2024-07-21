@@ -1,8 +1,57 @@
 package main
 
-import "github.com/torbenish/pos-golang/07-APIS/configs"
+import (
+	"encoding/json"
+	"net/http"
 
-func main(){
-	config, _ := configs.LoadConfig(".")
-	println(config.DBDriver)
+	"github.com/torbenish/pos-golang/07-APIS/configs"
+	"github.com/torbenish/pos-golang/07-APIS/internal/dto"
+	"github.com/torbenish/pos-golang/07-APIS/internal/entity"
+	"github.com/torbenish/pos-golang/07-APIS/internal/infra/database"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
+)
+
+func main() {
+	_, err := configs.LoadConfig(".")
+	if err != nil {
+		panic(err)
+	}
+	db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
+	if err != nil {
+		panic(err)
+	}
+	db.AutoMigrate(&entity.Product{}, &entity.User{})
+
+	http.ListenAndServe(":8000", nil)
+}
+
+type ProductHandler struct {
+	ProductDB database.ProductInterface
+}
+
+func NewProductHandler(db database.ProductInterface) *ProductHandler {
+	return &ProductHandler{
+		ProductDB: db,
+	}
+}
+
+func (h *ProductHandler) Create(w http.ResponseWriter, r *http.Request) {
+	var product dto.CreateProductImput
+	err := json.NewDecoder(r.Body).Decode(&product)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	p, err := entity.NewProduct(product.Name, product.Price)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	err = h.ProductDB.Create(p)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusCreated)
 }
