@@ -7,10 +7,12 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/jwtauth"
+	httpSwagger "github.com/swaggo/http-swagger"
 	"github.com/torbenish/pos-golang/07-APIS/configs"
 	"github.com/torbenish/pos-golang/07-APIS/internal/entity"
 	"github.com/torbenish/pos-golang/07-APIS/internal/infra/database"
 	"github.com/torbenish/pos-golang/07-APIS/internal/infra/webserver/handlers"
+	_ "github.com/torbenish/pos-golang/07-APIS/docs"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -53,7 +55,6 @@ func main() {
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.WithValue("jwt", configs.TokenAuth))
 	r.Use(middleware.WithValue("JwtExpiresIn", configs.JWTExpiresIn))
-	
 
 	r.Route("/products", func(r chi.Router) {
 		r.Use(jwtauth.Verifier(configs.TokenAuth))
@@ -67,6 +68,8 @@ func main() {
 
 	r.Post("/users", userHandler.Create)
 	r.Post("/users/generate_token", userHandler.GetJWT)
+
+	r.Get("/docs/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:8000/docs/doc.json")))
 
 	http.ListenAndServe(":8000", r)
 }
